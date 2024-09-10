@@ -1,0 +1,19 @@
+// import './App.css'
+
+import ChannelsList from "../components/ChannelsList"
+import SearchBar from "../components/SearchBar"
+import SideBar1 from "../components/sideBar1"
+import ChatArea from "../components/ChatArea"
+function App() {
+  // const [count, setCount] = useState(0)
+
+  return (
+    <>
+      <SearchBar/>
+      <SideBar1/>
+      <ChannelsList/>
+    </>
+  )
+}
+
+export default App
