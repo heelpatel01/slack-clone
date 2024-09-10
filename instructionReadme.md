@@ -128,3 +128,10 @@ Reconciliation'
 
 make component header of search bar and history.
 then left navbar
+
+
+
+
+----------------
+
+
