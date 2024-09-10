@@ -5,7 +5,7 @@ import {  } from "react-icons/ai"; // Icons
 
 
 import Messages from "./Messages";
-import { Input } from "react-chat-elements";
+// import { Input } from "react-chat-elements";
 
 function ChatArea() {
   return (
