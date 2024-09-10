@@ -51,7 +51,7 @@ function ChannelsList() {
     "https://as2.ftcdn.net/v2/jpg/01/15/52/31/1000_F_115523122_e4ry4EKsouP9kl2auNN1wSREoJq3kdcE.jpg";
 
   return (
-    <div className="p-1 h-5/6 w-80 mt-12 bg-slate-700 border-solid ml-20 fixed block">
+    <div className="p-1 h-5/6 w-80 mt-12 bg-gray-950 border-solid ml-20 fixed block">
       <div className="flex space-x-2 items-center">
         <div className="mr-24">Channels</div>
 
