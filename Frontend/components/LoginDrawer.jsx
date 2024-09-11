@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function SignupDrawer() {
+function LoginDrawer() {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
 
@@ -77,30 +77,21 @@ function SignupDrawer() {
         onClick={handleOpen}
         className={classes.submitButton}
       >
-        Signup
+        Login
       </Button>
 
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle className={classes.modalHeader}>
-          Sign Up
+          Login
         </DialogTitle>
 
         <DialogContent className={classes.dialogContent}>
           <form>
             <TextField
-              label="Username"
+              label="Enter username or email"
               variant="outlined"
               fullWidth
               margin="normal"
-              required
-              className={classes.inputField}
-            />
-            <TextField
-              label="Email"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              type="email"
               required
               className={classes.inputField}
             />
@@ -133,4 +124,4 @@ function SignupDrawer() {
   );
 }
 
-export default SignupDrawer;
+export default LoginDrawer;

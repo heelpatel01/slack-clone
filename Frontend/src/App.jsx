@@ -1,6 +1,7 @@
 // import './App.css'
 
 import ChannelsList from "../components/ChannelsList.jsx";
+import LoginDrawer from "../components/LoginDrawer.jsx";
 import SearchBar from "../components/SearchBar.jsx";
 import SideBar1 from "../components/SideBar1.jsx";
 import SignupDrawer from "../components/SignupDrawer.jsx";
@@ -12,7 +13,10 @@ function App() {
       <SearchBar />
       <SideBar1 />
       <ChannelsList />
-      <SignupDrawer />
+      <div className="flex space-x-1">
+        <SignupDrawer />
+        <LoginDrawer />
+      </div>
     </>
   );
 }
