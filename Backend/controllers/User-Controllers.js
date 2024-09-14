@@ -48,7 +48,9 @@ async function handleLogin(req, res) {
     const isPasswordValid = user.password == password;
 
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid password", success: false });
+      return res
+        .status(401)
+        .json({ error: "Invalid password", success: false });
     }
     return res
       .cookie("userId", user._id, { httpOnly: true })

@@ -1,65 +1,58 @@
 import React from "react";
-import { AiOutlineSend, AiOutlinePaperClip } from "react-icons/ai"; // Icons
+import { AiOutlineSend, AiOutlinePaperClip } from "react-icons/ai";
+import PropTypes from "prop-types"; 
 import { BsEmojiSmile } from "react-icons/bs";
-import {  } from "react-icons/ai"; // Icons
-
 
 import Messages from "./Messages";
-// import { Input } from "react-chat-elements";
 
-function ChatArea() {
+function ChatArea(props) {
   return (
-    <div className="ml-80 ">
+    <div
+      className="fixed bottom-0 right-0 w-80 h-96 bg-gray-950 rounded-lg p-4 flex flex-col"
+      style={{ right: 0, bottom: 0 ,height:"94vh" , width:"72vw"}}
+    >
       {/* Channel Name */}
-      <div
-        style={{ marginLeft: "" }}
-        className="flex w-96 -mt-64 -ml-28 mb-3 justify-center items-center"
-      >
+      <div className="flex items-center mb-3">
         <img
           src="https://ca.slack-edge.com/T06L3R0J3-U06BXCD6NRK-705cafff859e-192"
-          className="h-10 w-10 mr-2 rounded-xl ml-3"
+          className="h-10 w-10 mr-2 rounded-xl"
+          alt="Channel"
         />
-        <div> Team-Google </div>
+        <div className="text-white">{props.selectedChannel}</div>
       </div>
 
       {/* Chat messages area */}
-      <div
-        style={{ height: "39rem", width: "65rem" }}
-        className="h-96 w-96 p-4  bg-gray-950 rounded-sm text-black flex flex-col"
-      >
+      <div className="flex-1 overflow-auto bg-gray-800 rounded-lg p-2">
         <Messages />
       </div>
 
       {/* Input Box Area */}
-      <div style={{ height: '', width: '65rem' }} className="flex flex-col justify-end">
-  <div className="flex items-center p-3 bg-gray-950 border-t border-gray-300 rounded-lg">
-    
-    {/* Emoji Icon */}
-    <button className="p-2 rounded-lg hover:bg-gray-950 transition">
-      <BsEmojiSmile size={24} />
-    </button>
+      <div className="flex items-center p-2 bg-gray-950 border-t border-gray-700">
+        <button className="p-2 rounded-lg hover:bg-gray-700 transition">
+          <BsEmojiSmile size={24} className="text-white" />
+        </button>
 
-    {/* Input Field */}
-    <input
-      type="text"
-      placeholder="Message #general"
-      className="flex-1 mx-3 p-3 rounded-lg text-white bg-gray-900 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
+        <input
+          type="text"
+          placeholder="Message..."
+          className="flex-1 mx-2 p-2 rounded-lg text-white bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
-    {/* File Attachment Icon */}
-    <button className="p-2 rounded-lg hover:bg-gray-950 transition">
-      <AiOutlinePaperClip size={24} />
-    </button>
+        <button className="p-2 rounded-lg hover:bg-gray-700 transition">
+          <AiOutlinePaperClip size={24} className="text-white" />
+        </button>
 
-    {/* Send Icon */}
-    <button className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition">
-      <AiOutlineSend size={24} />
-    </button>
-  </div>
-</div>
-
+        <button className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition">
+          <AiOutlineSend size={24} />
+        </button>
+      </div>
     </div>
   );
 }
+
+ChatArea.propTypes = {
+  selectedChannel: PropTypes.string.isRequired, // Validate selectedChannel as a required string
+};
+
 
 export default ChatArea;
