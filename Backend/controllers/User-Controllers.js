@@ -4,6 +4,12 @@ async function handleSignup(req, res) {
   try {
     const { userName, email, password } = await req.body;
 
+    if (password.length < 6) {
+      return res
+        .json({ message: "Password should have minimum 6 length" })
+        .status(409);
+    }
+
     const isUserExist = await User.findOne({ $or: [{ userName }, { email }] });
 
     if (isUserExist) {
@@ -15,6 +21,7 @@ async function handleSignup(req, res) {
       newUser.save();
 
       return res
+        .cookie("user id", user._id, { httpOnly: true })
         .status(201)
         .json({ message: "User created successfully", newUser });
     }
@@ -43,8 +50,10 @@ async function handleLogin(req, res) {
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
-
-    return res.status(200).json({ message: "Login successful", user });
+    return res
+      .cookie("userId", user._id, { httpOnly: true })
+      .status(200)
+      .json({ message: "Login successful", user });
   } catch (error) {
     return res
       .status(500)
@@ -52,4 +61,16 @@ async function handleLogin(req, res) {
   }
 }
 
-module.exports = { handleSignup, handleLogin };
+async function handleLogOut(req, res) {
+  if (req.cookies.userId) {
+    return res.clearCookie("userId").json({
+      message: "User Loggedout Successfully!",
+    });
+  } else {
+    return res.json({
+      message: "User already loggedout!",
+    });
+  }
+}
+
+module.exports = { handleSignup, handleLogin, handleLogOut };

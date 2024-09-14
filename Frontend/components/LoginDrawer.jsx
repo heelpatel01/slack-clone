@@ -1,47 +1,54 @@
 import React, { useState } from "react";
-import { Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles((theme) => ({
   modalHeader: {
-    backgroundColor: "#333", // Dark gray for the header
-    color: "#fff",
+    backgroundColor: "#000000", // Black background for the header
+    color: "#FFFFFF", // White text color
     textAlign: "center",
     padding: "16px",
     fontSize: "1.25rem",
     fontWeight: "bold",
-    borderBottom: "1px solid #444", // Subtle border at the bottom
+    borderBottom: "1px solid #333333", // Dark gray border for contrast
   },
   dialogContent: {
-    backgroundColor: "#444", // Slightly lighter dark gray for the content area
+    backgroundColor: "#000000", // Black background for the content area
     padding: "24px",
-    color: "#fff",
+    color: "#FFFFFF", // White text color
     overflowY: "auto", // Allow scrolling if content is too long
   },
   inputField: {
     marginBottom: "16px",
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#666', // Medium gray border
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "#333333", // Dark gray border color
       },
-      '&:hover fieldset': {
-        borderColor: '#fff', // White border on hover
+      "&:hover fieldset": {
+        borderColor: "#FFFFFF", // White border color on hover
       },
     },
-    '& .MuiInputLabel-root': {
-      color: '#aaa', // Light gray label color
+    "& .MuiInputLabel-root": {
+      color: "#FFFFFF", // White text color for the label
     },
-    '& .MuiInputBase-input': {
-      color: '#fff', // Text color
+    "& .MuiInputBase-input": {
+      color: "#FFFFFF", // White text color
     },
   },
   submitButton: {
-    backgroundColor: "#555", // Medium gray for the button
-    color: "#fff",
+    backgroundColor: "#333333", // Dark gray background for the button
+    color: "#FFFFFF", // White text color
     textTransform: "none",
     fontWeight: "bold",
     "&:hover": {
-      backgroundColor: "#666", // Slightly lighter gray on hover
+      backgroundColor: "#000000", // Black background on hover
     },
     padding: "8px 16px",
     border: "none", // Remove border
@@ -49,79 +56,93 @@ const useStyles = makeStyles((theme) => ({
     transition: "background-color 0.3s ease",
   },
   cancelButton: {
-    backgroundColor: "#666", // Darker gray for the cancel button
-    color: "#fff",
+    backgroundColor: "#000000", // Black background for the cancel button
+    color: "#FFFFFF", // White text color
     textTransform: "none",
     "&:hover": {
-      backgroundColor: "#777", // Slightly lighter gray on hover
+      backgroundColor: "#333333", // Dark gray background on hover
     },
     padding: "8px 16px",
     border: "none", // Remove border
     cursor: "pointer", // Pointer cursor on hover
     transition: "background-color 0.3s ease",
   },
+  modalContainer: {
+    width: "300px", // Slim width
+    height: "auto", // Auto height to accommodate content
+    maxHeight: "80vh", // Restrict maximum height to viewport height
+  },
 }));
 
-
 function LoginDrawer() {
+
+  
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [open, setOpen] = useState(false);
   const classes = useStyles();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  return (
-    <div>
-      <Button
-        variant="contained"
-        onClick={handleOpen}
-        className={classes.submitButton}
-      >
-        Login
-      </Button>
+  const handleLogin=()=>{
 
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle className={classes.modalHeader}>
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <div className="">
+        <Button
+          variant="contained"
+          onClick={handleOpen}
+          className={classes.submitButton}
+        >
           Login
-        </DialogTitle>
+        </Button>
 
-        <DialogContent className={classes.dialogContent}>
-          <form>
-            <TextField
-              label="Enter username or email"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              required
-              className={classes.inputField}
-            />
-            <TextField
-              label="Password"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              type="password"
-              required
-              className={classes.inputField}
-            />
-          </form>
-        </DialogContent>
+        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+          <DialogTitle className={classes.modalHeader}>Login</DialogTitle>
 
-        <DialogActions style={{ backgroundColor: "#333" }}>
-          <Button onClick={handleClose} className={classes.cancelButton}>
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            className={classes.submitButton}
-            onClick={handleClose}
-          >
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
+          <DialogContent className={classes.dialogContent}>
+            <form>
+              <TextField
+                label="Enter username or email"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                required
+                className={classes.inputField}
+              />
+              <TextField
+                label="Password"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                type="password"
+                required
+                className={classes.inputField}
+              />
+            </form>
+          </DialogContent>
+
+          <DialogActions style={{ backgroundColor: "#333" }}>
+            <Button onClick={handleClose} className={classes.cancelButton}>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              className={classes.submitButton}
+              onClick={handleClose}
+            >
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    );
+  } else {
+    return;
+  }
 }
 
 export default LoginDrawer;

@@ -1,19 +1,32 @@
 const mongoose = require("mongoose");
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
-const userSchema = new mongoose.Schema({
-  userName: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-});
+const userSchema = new mongoose.Schema(
+  {
+    userName: {
+      type: String,
+      required: true,
+      lowercase: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    channels: [
+      {
+        type: ObjectId,
+        ref: "Channel",
+      },
+    ],
 
-const User=mongoose.model("User",userSchema);
-module.exports=User;
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
+  },
+  { timestamps: true }
+);
+
+const User = mongoose.model("User", userSchema);
+module.exports = User;

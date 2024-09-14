@@ -65,13 +65,15 @@ const useStyles = makeStyles((theme) => ({
 
 function SignupDrawer() {
   const [open, setOpen] = useState(false);
+  const [userName,setUserName]=useState()
   const classes = useStyles();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  
 
   return (
-    <div>
+    <div className="">
       <Button
         variant="contained"
         onClick={handleOpen}
