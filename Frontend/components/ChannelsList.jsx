@@ -3,18 +3,45 @@ import { IoFilterOutline } from "react-icons/io5";
 import { FaRegPenToSquare } from "react-icons/fa6";
 import ChatArea from "./ChatArea";
 import axiosInstance from "../Utils/AxiosInstance";
+import SignupDrawer from "./SignupDrawer";
+import LoginDrawer from "./LoginDrawer";
 
 function ChannelsList() {
   const [showInput, setShowInput] = useState(false);
   const [newChannel, setNewChannel] = useState("");
   const [channelsList, setChannelsList] = useState([]);
   const [selectedChannel, setSelectedChannel] = useState("No-Channel");
+  const [isLoggedIn,setIsLoggedIn]=useState(false);
+  const [loading,setLoading]=useState(true);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const response = await axiosInstance.get("/user/checkUserLogin");
+        if (response.data.isLoggedIn) {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.log("Error checking user login status:", error);
+      } finally {
+        setLoading(false); // Finish loading once the check is complete
+      }
+    };
+
+    checkUser(); // Run this on component mount
+  }, []);
 
   const handleIconClick = () => {
     setShowInput(!showInput);
   };
 
   const handleCreateChannel = async (e) => {
+
+    if(!isLoggedIn){
+      setShowInput(!showInput);
+      console.log("Please do login first")
+      return;
+    }
     if (newChannel.trim() !== "") {
       try {
         const response = await axiosInstance.post("/channel/createChannel", {
@@ -52,7 +79,7 @@ function ChannelsList() {
   }, []);
 
   return (
-    <div className="p-1 h-screen w-80 mt-12 bg-[#1A1D21] border-solid ml-20 fixed overflow-auto">
+    <div className="p-1 h-screen w-80 mt-12 bg-[#1A1D21] border-solid ml-20 fixed overflow-auto rounded-md">
       <div className="flex space-x-2 items-center">
         <div className="mr-24 text-white">Channels</div>
 
@@ -112,7 +139,11 @@ function ChannelsList() {
         </ul>
       </div>
       {/* ChatArea component should be placed outside of this component in your app */}
-      <ChatArea selectedChannel={selectedChannel} />
+      {isLoggedIn && <ChatArea selectedChannel={selectedChannel} />}
+      {!isLoggedIn && <div className="relative flex  space-x-1">
+        {!isLoggedIn && <SignupDrawer />}
+        {!isLoggedIn && <LoginDrawer />}
+      </div>}
     </div>
   );
 }

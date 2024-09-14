@@ -6,6 +6,7 @@ import SideBar1 from "../components/SideBar1.jsx";
 import SignupDrawer from "../components/SignupDrawer.jsx";
 import axiosInstance from "../Utils/AxiosInstance.js";
 import ChatArea from "../components/ChatArea.jsx";
+import {AuthProvider} from "./contexts/AuthProvider.jsx"
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -34,14 +35,16 @@ function App() {
 
   return (
     <>
+    <AuthProvider>
       <SearchBar />
       <SideBar1 />
       <ChannelsList />
-      <div className="relative flex  space-x-1">
+      {/* <div className="relative flex  space-x-1">
         {!isLoggedIn && <SignupDrawer />}
         {!isLoggedIn && <LoginDrawer />}
-      </div>
+      </div> */}
       {/* <ChatArea channelName="Hii"/> */}
+      </AuthProvider>
     </>
   );
 }
