@@ -8,6 +8,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import axiosInstance from "../Utils/AxiosInstance";
 
 const useStyles = makeStyles((theme) => ({
   modalHeader: {
@@ -67,82 +68,104 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer", // Pointer cursor on hover
     transition: "background-color 0.3s ease",
   },
-  modalContainer: {
-    width: "300px", // Slim width
-    height: "auto", // Auto height to accommodate content
-    maxHeight: "80vh", // Restrict maximum height to viewport height
+  errorText: {
+    color: "red",
+    marginBottom: "16px",
   },
 }));
 
 function LoginDrawer() {
-
-  
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [open, setOpen] = useState(false);
+  const [userNameOrEmail, setUserNameOrEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+
   const classes = useStyles();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleLogin=()=>{
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!userNameOrEmail) {
+      setError("Please enter your username or email address");
+      return;
+    }
+    if (!password) {
+      setError("Please enter your password");
+      return;
+    }
+    setError("");
 
-  }
+    try {
+      const response = await axiosInstance.post("/user/login", {
+        userNameOrEmail: userNameOrEmail,
+        password: password,
+      });
 
-  if (!isLoggedIn) {
-    return (
-      <div className="">
-        <Button
-          variant="contained"
-          onClick={handleOpen}
-          className={classes.submitButton}
-        >
-          Login
-        </Button>
+      if (response.data && response.data.userName) {
+        setIsLoggedIn(true);
+        console.log("User logged in:", response.data.userName);
+      }
+      handleClose();
+    } catch (error) {
+      setError("Login failed! Please try again.");
+      console.log("Error during login:", error);
+    }
+  };
 
-        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-          <DialogTitle className={classes.modalHeader}>Login</DialogTitle>
+  return (
+    <div>
+      <Button variant="contained" onClick={handleOpen} className={classes.submitButton}>
+        Login
+      </Button>
 
-          <DialogContent className={classes.dialogContent}>
-            <form>
-              <TextField
-                label="Enter username or email"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                required
-                className={classes.inputField}
-              />
-              <TextField
-                label="Password"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                type="password"
-                required
-                className={classes.inputField}
-              />
-            </form>
-          </DialogContent>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle className={classes.modalHeader}>Login</DialogTitle>
 
-          <DialogActions style={{ backgroundColor: "#333" }}>
-            <Button onClick={handleClose} className={classes.cancelButton}>
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              className={classes.submitButton}
-              onClick={handleClose}
-            >
-              Submit
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-    );
-  } else {
-    return;
-  }
+        <DialogContent className={classes.dialogContent}>
+          {error && <div className={classes.errorText}>{error}</div>}
+          <form>
+            <TextField
+              label="Username or Email"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              required
+              className={classes.inputField}
+              value={userNameOrEmail}
+              onChange={(e) => setUserNameOrEmail(e.target.value)}
+            />
+            <TextField
+              label="Password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              type="password"
+              required
+              className={classes.inputField}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </form>
+        </DialogContent>
+
+        <DialogActions className={classes.modalHeader}>
+          <Button onClick={handleClose} className={classes.cancelButton}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            className={classes.submitButton}
+            onClick={handleLogin}
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 }
 
 export default LoginDrawer;

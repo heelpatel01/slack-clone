@@ -21,7 +21,7 @@ async function handleSignup(req, res) {
       newUser.save();
 
       return res
-        .cookie("user id", user._id, { httpOnly: true })
+        .cookie("userId", newUser._id, { httpOnly: true })
         .status(201)
         .json({ message: "User created successfully", newUser });
     }
@@ -48,16 +48,17 @@ async function handleLogin(req, res) {
     const isPasswordValid = user.password == password;
 
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid password" });
+      return res.status(401).json({ error: "Invalid password", success: false });
     }
     return res
       .cookie("userId", user._id, { httpOnly: true })
       .status(200)
-      .json({ message: "Login successful", user });
+      .json({ message: "Login successful", user, success: true });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ error: "Internal Server Error (User-Controller)" });
+    return res.status(500).json({
+      error: "Internal Server Error (User-Controller)",
+      success: false,
+    });
   }
 }
 
@@ -73,4 +74,29 @@ async function handleLogOut(req, res) {
   }
 }
 
-module.exports = { handleSignup, handleLogin, handleLogOut };
+async function checkUserLogin(req, res) {
+  if (req.cookies.userId) {
+    const user = await User.findById(req.cookies.userId);
+
+    if (!user) {
+      return res.status(200).json({
+        message: "User is unauthenticated",
+        isLoggedIn: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "User is logged in",
+      isLoggedIn: true,
+      name: user.userName,
+      email: user.email,
+    });
+  } else {
+    return res.status(200).json({
+      message: "User is not logged in",
+      isLoggedIn: false,
+    });
+  }
+}
+
+module.exports = { handleSignup, handleLogin, handleLogOut, checkUserLogin };

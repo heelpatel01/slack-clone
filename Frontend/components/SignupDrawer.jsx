@@ -1,47 +1,55 @@
 import React, { useState } from "react";
-import { Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import axiosInstance from "../Utils/AxiosInstance";
 
 const useStyles = makeStyles((theme) => ({
   modalHeader: {
-    backgroundColor: "#333", // Dark gray for the header
-    color: "#fff",
+    backgroundColor: "#000000", // Black background for the header
+    color: "#FFFFFF", // White text color
     textAlign: "center",
     padding: "16px",
     fontSize: "1.25rem",
     fontWeight: "bold",
-    borderBottom: "1px solid #444", // Subtle border at the bottom
+    borderBottom: "1px solid #333333", // Dark gray border for contrast
   },
   dialogContent: {
-    backgroundColor: "#444", // Slightly lighter dark gray for the content area
+    backgroundColor: "#000000", // Black background for the content area
     padding: "24px",
-    color: "#fff",
+    color: "#FFFFFF", // White text color
     overflowY: "auto", // Allow scrolling if content is too long
   },
   inputField: {
     marginBottom: "16px",
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#666', // Medium gray border
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "#333333", // Dark gray border color
       },
-      '&:hover fieldset': {
-        borderColor: '#fff', // White border on hover
+      "&:hover fieldset": {
+        borderColor: "#FFFFFF", // White border color on hover
       },
     },
-    '& .MuiInputLabel-root': {
-      color: '#aaa', // Light gray label color
+    "& .MuiInputLabel-root": {
+      color: "#FFFFFF", // White text color for the label
     },
-    '& .MuiInputBase-input': {
-      color: '#fff', // Text color
+    "& .MuiInputBase-input": {
+      color: "#FFFFFF", // White text color
     },
   },
   submitButton: {
-    backgroundColor: "#555", // Medium gray for the button
-    color: "#fff",
+    backgroundColor: "#333333", // Dark gray background for the button
+    color: "#FFFFFF", // White text color
     textTransform: "none",
     fontWeight: "bold",
     "&:hover": {
-      backgroundColor: "#666", // Slightly lighter gray on hover
+      backgroundColor: "#000000", // Black background on hover
     },
     padding: "8px 16px",
     border: "none", // Remove border
@@ -49,11 +57,11 @@ const useStyles = makeStyles((theme) => ({
     transition: "background-color 0.3s ease",
   },
   cancelButton: {
-    backgroundColor: "#666", // Darker gray for the cancel button
-    color: "#fff",
+    backgroundColor: "#000000", // Black background for the cancel button
+    color: "#FFFFFF", // White text color
     textTransform: "none",
     "&:hover": {
-      backgroundColor: "#777", // Slightly lighter gray on hover
+      backgroundColor: "#333333", // Dark gray background on hover
     },
     padding: "8px 16px",
     border: "none", // Remove border
@@ -62,15 +70,52 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 function SignupDrawer() {
   const [open, setOpen] = useState(false);
-  const [userName,setUserName]=useState()
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
   const classes = useStyles();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    if (!userName) {
+      setError("Please enter a username.");
+      return;
+    }
+    if (!email) {
+      setError("Please enter your email.");
+      return;
+    }
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
+    setError("");
+
+    try {
+      const response = await axiosInstance.post("/user/create-user", {
+        userName: userName,
+        email: email,
+        password: password,
+      });
+
+      if (response.data && response.data.userName) {
+        console.log("User created:", response.data.userName);
+      }
+
+      handleClose();
+    } catch (error) {
+      setError("Signup failed! Please try again.");
+      console.log("Error during signup:", error);
+    }
+  };
 
   return (
     <div className="">
@@ -83,9 +128,7 @@ function SignupDrawer() {
       </Button>
 
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle className={classes.modalHeader}>
-          Sign Up
-        </DialogTitle>
+        <DialogTitle className={classes.modalHeader}>Sign Up</DialogTitle>
 
         <DialogContent className={classes.dialogContent}>
           <form>
@@ -96,6 +139,8 @@ function SignupDrawer() {
               margin="normal"
               required
               className={classes.inputField}
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
             />
             <TextField
               label="Email"
@@ -105,6 +150,8 @@ function SignupDrawer() {
               type="email"
               required
               className={classes.inputField}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               label="Password"
@@ -114,18 +161,20 @@ function SignupDrawer() {
               type="password"
               required
               className={classes.inputField}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </form>
         </DialogContent>
 
-        <DialogActions style={{ backgroundColor: "#333" }}>
+        <DialogActions className={classes.modalHeader}>
           <Button onClick={handleClose} className={classes.cancelButton}>
             Cancel
           </Button>
           <Button
             variant="contained"
             className={classes.submitButton}
-            onClick={handleClose}
+            onClick={handleSignup}
           >
             Submit
           </Button>
