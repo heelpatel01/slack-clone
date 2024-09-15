@@ -59,11 +59,13 @@ const handleNewMessageCreation = async (req, res) => {
     return res.status(201).json({
       message: "Message created successfully",
       content: newMessage,
+      success:true
     });
   } catch (error) {
     console.error("Error creating the message:", error);
     return res.status(500).json({
       message: "Error creating the message",
+      success:false,
       error: error.message, // Send only the error message for security reasons
     });
   }
@@ -127,23 +129,26 @@ const handleMessageFetching = async (req, res) => {
       });
     }
 
-    const messages = await Message.find({ Channel: channelId });
+    const messages = await Message.find({ Channel: channelId }).populate("sender");
 
     if (messages.length === 0) {
       return res.status(404).json({
         message: "No messages found",
+        success:true
       });
     }
 
     return res.status(200).json({
       message: "All messages fetched successfully",
       content: messages,
+      success:true
     });
   } catch (error) {
     console.error("Error during fetching the messages:", error);
     return res.status(500).json({
       message: "Error during fetching the messages",
       error: error.message, // Send only the error message for security reasons
+      success:false
     });
   }
 };

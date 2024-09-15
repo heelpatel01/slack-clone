@@ -1,9 +1,20 @@
-import React from 'react'
+import React from "react";
+import PropTypes from "prop-types";
 
-function Messages() {
+function Messages({ messages }) {
   return (
-    <div>Messages</div>
-  )
+    <div>
+      {messages.map((msg, idx) => (
+        <div key={idx} className="text-white mb-2">
+          <strong>{msg.userName}:</strong> {msg.message}
+        </div>
+      ))}
+    </div>
+  );
 }
 
-export default Messages
+Messages.propTypes = {
+  messages: PropTypes.array.isRequired, // Validate messages prop
+};
+
+export default Messages;

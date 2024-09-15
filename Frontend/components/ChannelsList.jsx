@@ -1,57 +1,47 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { IoFilterOutline } from "react-icons/io5";
 import { FaRegPenToSquare } from "react-icons/fa6";
 import ChatArea from "./ChatArea";
 import axiosInstance from "../Utils/AxiosInstance";
 import SignupDrawer from "./SignupDrawer";
 import LoginDrawer from "./LoginDrawer";
+import { AuthContext } from "../src/contexts/AuthProvider";
 
 function ChannelsList() {
   const [showInput, setShowInput] = useState(false);
   const [newChannel, setNewChannel] = useState("");
   const [channelsList, setChannelsList] = useState([]);
   const [selectedChannel, setSelectedChannel] = useState("No-Channel");
-  const [isLoggedIn,setIsLoggedIn]=useState(false);
-  const [loading,setLoading]=useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const authState = useContext(AuthContext);
+  const [channelId, setChannelId] = useState(null);
 
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const response = await axiosInstance.get("/user/checkUserLogin");
-        if (response.data.isLoggedIn) {
-          setIsLoggedIn(true);
-        }
-      } catch (error) {
-        console.log("Error checking user login status:", error);
-      } finally {
-        setLoading(false); // Finish loading once the check is complete
-      }
-    };
-
-    checkUser(); // Run this on component mount
+  const checkUser = useCallback(async () => {
+    try {
+      const { data } = await axiosInstance.get("/user/checkUserLogin");
+      setIsLoggedIn(data.isLoggedIn);
+    } catch (error) {
+      console.log("Error checking user login status:", error);
+    }
   }, []);
 
-  const handleIconClick = () => {
-    setShowInput(!showInput);
-  };
-
-  const handleCreateChannel = async (e) => {
-
-    if(!isLoggedIn){
-      setShowInput(!showInput);
-      console.log("Please do login first")
+  const handleCreateChannel = async () => {
+    if (!isLoggedIn) {
+      setShowInput(false);
+      console.log("Please log in first.");
       return;
     }
-    if (newChannel.trim() !== "") {
+
+    if (newChannel.trim()) {
       try {
-        const response = await axiosInstance.post("/channel/createChannel", {
+        const { data } = await axiosInstance.post("/channel/createChannel", {
           name: newChannel,
         });
-
-        if (response.data && response.data.channels.name) {
-          console.log("Channel created successfully: " + response.data.channels.name);
-          setShowInput(!showInput);
-          handleFetchChannelsList();
+        if (data?.channels?.name) {
+          console.log("Channel created successfully:", data.channels.name);
+          setShowInput(false);
+          setNewChannel("");
+          fetchChannelsList(); // Refresh the channel list after creation
         }
       } catch (error) {
         console.error("Error creating channel:", error);
@@ -59,24 +49,23 @@ function ChannelsList() {
     }
   };
 
-  const handleFetchChannelsList = async () => {
+  const fetchChannelsList = useCallback(async () => {
     try {
-      const response = await axiosInstance.get("/channel/fetchChannels");
-
-      if (response.data && response.data.channels) {
-        console.log(response.data.channels);
-        setChannelsList(response.data.channels);
+      const { data } = await axiosInstance.get("/channel/fetchChannels");
+      if (data?.channels) {
+        setChannelsList(data.channels);
       } else {
-        console.error("Error fetching channels list!");
+        console.error("Error fetching channels list.");
       }
     } catch (error) {
       console.error("Error fetching channels list:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    handleFetchChannelsList();
-  }, []);
+    checkUser();
+    fetchChannelsList();
+  }, [checkUser, fetchChannelsList, authState.universalLoggedin]);
 
   return (
     <div className="p-1 h-screen w-80 mt-12 bg-[#1A1D21] border-solid ml-20 fixed overflow-auto rounded-md">
@@ -93,7 +82,7 @@ function ChannelsList() {
         <IoFilterOutline className="cursor-pointer text-white" />
         <FaRegPenToSquare
           className="cursor-pointer text-white"
-          onClick={handleIconClick}
+          onClick={() => setShowInput(!showInput)}
         />
       </div>
 
@@ -123,7 +112,10 @@ function ChannelsList() {
               <li
                 key={idx}
                 className="flex items-center font-bold text-white py-2 px-4 bg-gray-800 rounded-lg hover:bg-[#CC4400] transition duration-300 cursor-pointer shadow-md"
-                onClick={() => setSelectedChannel(channel.name)}
+                onClick={() => {
+                  setSelectedChannel(channel.name);
+                  setChannelId(channel._id);
+                }}
               >
                 <img
                   src="https://as2.ftcdn.net/v2/jpg/01/15/52/31/1000_F_115523122_e4ry4EKsouP9kl2auNN1wSREoJq3kdcE.jpg"
@@ -138,12 +130,18 @@ function ChannelsList() {
           )}
         </ul>
       </div>
-      {/* ChatArea component should be placed outside of this component in your app */}
-      {isLoggedIn && <ChatArea selectedChannel={selectedChannel} />}
-      {!isLoggedIn && <div className="relative flex  space-x-1">
-        {!isLoggedIn && <SignupDrawer />}
-        {!isLoggedIn && <LoginDrawer />}
-      </div>}
+
+      {isLoggedIn ? (
+        <ChatArea
+          selectedChannel={selectedChannel}
+          channelId={channelId}
+        />
+      ) : (
+        <div className="relative flex space-x-1">
+          <SignupDrawer />
+          <LoginDrawer />
+        </div>
+      )}
     </div>
   );
 }

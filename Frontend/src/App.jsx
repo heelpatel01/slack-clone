@@ -11,6 +11,7 @@ import {AuthProvider} from "./contexts/AuthProvider.jsx"
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true); // Optional loading state
+  
 
   useEffect(() => {
     const checkUser = async () => {

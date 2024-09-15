@@ -9,6 +9,9 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import axiosInstance from "../Utils/AxiosInstance";
+import { AuthContext } from "../src/contexts/AuthProvider";
+import { useContext } from "react";
+
 
 const useStyles = makeStyles((theme) => ({
   modalHeader: {
@@ -70,7 +73,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 function SignupDrawer() {
   const [open, setOpen] = useState(false);
   const [userName, setUserName] = useState("");
@@ -78,6 +80,8 @@ function SignupDrawer() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const classes = useStyles();
+
+  const authState=useContext(AuthContext);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -110,7 +114,7 @@ function SignupDrawer() {
       if (response.data && response.data.userName) {
         console.log("User created:", response.data.userName);
       }
-
+      authState.setUniversalLoggedin(true);
       handleClose();
     } catch (error) {
       setError("Signup failed! Please try again.");
