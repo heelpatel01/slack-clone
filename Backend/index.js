@@ -23,7 +23,7 @@ app.use("/user", userRoute);
 app.use("/channel", channelRoute);
 app.use("/message", messageRoute);
 
-app.get("/", (req, res) => {
+app.get("/hi", (req, res) => {
   res.send("Hi");
 });
 
