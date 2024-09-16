@@ -8,35 +8,46 @@ import dayjs from "dayjs";
 function ChatArea(props) {
   const [message, setMessage] = useState("");
   const [allMessages, setAllMessages] = useState([]);
-  const [showInviteDialog, setShowInviteDialog] = useState(false); // To toggle the invite dialog
-  const [usersToInvite, setUsersToInvite] = useState([]); // List of users to invite
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [usersToInvite, setUsersToInvite] = useState([]);
 
-  // Fetch all messages for the channel when channelId changes
+  // Fetch messages initially and start polling for new messages
   useEffect(() => {
-    async function fetchAllMessages() {
-      if (!props.channelId) return;
+    if (!props.channelId) return;
 
+    // Function to fetch messages
+    const fetchMessages = async () => {
       try {
         const response = await axiosInstance.get(
           `/message/channels/${props.channelId}/messages`
         );
-
         if (response.data && response.data.success) {
           setAllMessages(response.data.content);
         }
       } catch (error) {
         console.log("Error fetching messages:", error);
       }
-    }
+    };
 
-    fetchAllMessages();
-    setAllMessages([]);
+    // Initial fetch
+    fetchMessages();
+
+    // Poll every 5 seconds
+    const intervalId = setInterval(() => {
+      fetchMessages();
+    }, 5000);
+
+    // Cleanup interval on component unmount or when channelId changes
+    return () => {
+      setAllMessages([]);
+      clearInterval(intervalId);
+    };
   }, [props.channelId]);
 
-  async function messageCreation() {
-    if (message.trim() === "") {
-      return;
-    }
+  // Function to send a message
+  const messageCreation = async () => {
+    if (message.trim() === "") return;
+
     try {
       const response = await axiosInstance.post(
         `/message/channels/${props.channelId}/messages`,
@@ -52,7 +63,7 @@ function ChatArea(props) {
     } catch (error) {
       console.log("Error while creating a message", error);
     }
-  }
+  };
 
   // Function to fetch users who are not in the channel
   const fetchUsersToInvite = async () => {
@@ -62,7 +73,7 @@ function ChatArea(props) {
       );
       if (response.data && response.data.success) {
         setUsersToInvite(response.data.message);
-        setShowInviteDialog(true); // Show the dialog
+        setShowInviteDialog(true);
       } else {
         console.log("Failed to fetch users to invite");
       }
@@ -71,15 +82,14 @@ function ChatArea(props) {
     }
   };
 
-  // Function to invite a user to the channel
   const inviteUser = async (userId) => {
     try {
       const response = await axiosInstance.post(
-        `/channels/${props.channelId}/invite/${userId}`
+        `/channel/${props.channelId}/invite/${userId}`
       );
       if (response.data && response.data.success) {
         console.log("User invited successfully");
-        setUsersToInvite(usersToInvite.filter((user) => user._id !== userId)); // Remove invited user from the list
+        setUsersToInvite(usersToInvite.filter((user) => user._id !== userId));
       } else {
         console.log("Failed to invite user");
       }
@@ -88,7 +98,7 @@ function ChatArea(props) {
     }
   };
 
-  // Function to group messages by date
+  // Group messages by date
   const groupMessagesByDate = (messages) => {
     return messages.reduce((acc, msg) => {
       const messageDate = dayjs(msg.createdAt).format("YYYY-MM-DD");
@@ -192,6 +202,12 @@ function ChatArea(props) {
         <button
           className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
           onClick={messageCreation}
+          // onKeyDown={messageCreation}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              messageCreation();
+            }
+          }}
         >
           <AiOutlineSend size={24} />
         </button>

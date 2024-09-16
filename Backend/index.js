@@ -10,7 +10,7 @@ const cookieParser = require("cookie-parser");
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Your frontend URL
+    origin: "http://localhost:5173" || "https://slack-clone-eight-beta.vercel.app/", // Your frontend URL
     credentials: true, // Allow cookies to be sent
   })
 );
