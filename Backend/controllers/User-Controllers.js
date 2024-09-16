@@ -101,4 +101,47 @@ async function checkUserLogin(req, res) {
   }
 }
 
-module.exports = { handleSignup, handleLogin, handleLogOut, checkUserLogin };
+//handleFetchUsersToInvite channels/:channelId/invite/
+async function handleFetchUsersToInvite(req, res) {
+  try {
+    console.log("You were fucked up at this momemnt 1")
+    const { channelId } = req.params;
+    console.log("You were fucked up at this momemnt 2")
+
+
+    const usersList = await User.find({
+      channels: {
+        $nin: [channelId],
+      },
+    });
+    // console.log("You were fucked up at this momemnt 3"+ usersList)
+
+
+    if (usersList.length === 0 || !usersList) {
+      return res.status(404).json({
+        success: false,
+        message: "No user available to invite",
+      });
+    }
+
+    return res.status(200).json({ success: true, message: usersList });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error while fetching the users to invite!",
+    });
+  }
+}
+
+
+
+module.exports = { handleFetchUsersToInvite };
+
+
+module.exports = {
+  handleSignup,
+  handleLogin,
+  handleLogOut,
+  checkUserLogin,
+  handleFetchUsersToInvite,
+};

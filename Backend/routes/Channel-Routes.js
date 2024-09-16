@@ -4,5 +4,6 @@ const {handleChannelCreation,handleChannelGet}=require("../controllers/Channel-C
 
 router.get("/fetchChannels", handleChannelGet);
 router.post("/createChannel", handleChannelCreation);
+router.post("/:channelId/invite/:userId")
 
 module.exports = router;

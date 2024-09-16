@@ -28,7 +28,12 @@ function ChatArea(props) {
     }
 
     fetchAllMessages();
+    setAllMessages([]);
+    return;
+
   }, [props.channelId]);
+
+  
 
   async function messageCreation() {
     if (message.trim() === "") {

@@ -6,6 +6,7 @@ const {
   handleLogin,
   handleLogOut,
   checkUserLogin,
+  handleFetchUsersToInvite,
 } = require("../controllers/User-Controllers");
 
 router.post("/create-user", handleSignup);
@@ -16,5 +17,7 @@ router.post("/login", handleLogin);
 router.delete("/logout", handleLogOut);
 
 router.get("/checkUserLogin", checkUserLogin);
+
+router.get("/channels/:channelId/invite", handleFetchUsersToInvite);
 
 module.exports = router;
