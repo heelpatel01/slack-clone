@@ -8,9 +8,22 @@ const messageRoute = require("./routes/Message-Route");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
+// Define allowed origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://slack-clone-eight-beta.vercel.app/",
+];
+
+// Set up CORS middleware with dynamic origin check
 app.use(
   cors({
-    origin: "http://localhost:5173" || "https://slack-clone-eight-beta.vercel.app/", // Your frontend URL
+    origin: function (origin, callback) {
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true, // Allow cookies to be sent
   })
 );
