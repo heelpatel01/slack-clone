@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineSend, AiOutlinePaperClip } from "react-icons/ai";
-import PropTypes from "prop-types";
 import { BsEmojiSmile } from "react-icons/bs";
+import PropTypes from "prop-types";
 import axiosInstance from "../Utils/AxiosInstance";
-import dayjs from "dayjs"; // For easier date formatting
+import dayjs from "dayjs";
 
 function ChatArea(props) {
   const [message, setMessage] = useState("");
   const [allMessages, setAllMessages] = useState([]);
+  const [showInviteDialog, setShowInviteDialog] = useState(false); // To toggle the invite dialog
+  const [usersToInvite, setUsersToInvite] = useState([]); // List of users to invite
 
   // Fetch all messages for the channel when channelId changes
   useEffect(() => {
@@ -29,11 +31,7 @@ function ChatArea(props) {
 
     fetchAllMessages();
     setAllMessages([]);
-    return;
-
   }, [props.channelId]);
-
-  
 
   async function messageCreation() {
     if (message.trim() === "") {
@@ -46,7 +44,6 @@ function ChatArea(props) {
       );
 
       if (response.data && response.data.success) {
-        console.log("Message Created Successfully");
         setMessage("");
         setAllMessages([...allMessages, response.data.content]); // Append new message
       } else {
@@ -56,6 +53,40 @@ function ChatArea(props) {
       console.log("Error while creating a message", error);
     }
   }
+
+  // Function to fetch users who are not in the channel
+  const fetchUsersToInvite = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/user/channels/${props.channelId}/invite/`
+      );
+      if (response.data && response.data.success) {
+        setUsersToInvite(response.data.message);
+        setShowInviteDialog(true); // Show the dialog
+      } else {
+        console.log("Failed to fetch users to invite");
+      }
+    } catch (error) {
+      console.log("Error fetching users to invite", error);
+    }
+  };
+
+  // Function to invite a user to the channel
+  const inviteUser = async (userId) => {
+    try {
+      const response = await axiosInstance.post(
+        `/channels/${props.channelId}/invite/${userId}`
+      );
+      if (response.data && response.data.success) {
+        console.log("User invited successfully");
+        setUsersToInvite(usersToInvite.filter((user) => user._id !== userId)); // Remove invited user from the list
+      } else {
+        console.log("Failed to invite user");
+      }
+    } catch (error) {
+      console.log("Error inviting user:", error);
+    }
+  };
 
   // Function to group messages by date
   const groupMessagesByDate = (messages) => {
@@ -86,6 +117,14 @@ function ChatArea(props) {
         <div className="text-white">{props.selectedChannel}</div>
       </div>
 
+      {/* Invite Button */}
+      <button
+        onClick={fetchUsersToInvite}
+        className="mb-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+      >
+        Invite Users
+      </button>
+
       {/* Chat messages area */}
       <div className="flex-1 overflow-auto bg-gray-800 rounded-lg p-2">
         {Object.keys(groupedMessages).length > 0 ? (
@@ -113,15 +152,12 @@ function ChatArea(props) {
                         : "bg-gray-700 text-gray-100"
                     }`}
                   >
-                    {/* Sender Name */}
                     <div className="font-semibold text-sm text-green-400">
                       {msg.sender === "your_user_id"
                         ? "You"
                         : msg.sender.userName}
                     </div>
-                    {/* Message Text */}
                     <div>{msg.message}</div>
-                    {/* Time of the message */}
                     <div className="text-xs text-gray-400 mt-1">
                       {dayjs(msg.createdAt).format("h:mm A")}
                     </div>
@@ -160,6 +196,41 @@ function ChatArea(props) {
           <AiOutlineSend size={24} />
         </button>
       </div>
+
+      {/* Invite Dialog */}
+      {showInviteDialog && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white text-black p-6 rounded-lg shadow-lg w-1/2">
+            <h2 className="text-lg font-bold mb-4">Invite Users</h2>
+            <ul className="space-y-2">
+              {usersToInvite.length > 0 ? (
+                usersToInvite.map((user) => (
+                  <li
+                    key={user._id}
+                    className="flex justify-between items-center"
+                  >
+                    <span>{user.userName}</span>
+                    <button
+                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                      onClick={() => inviteUser(user._id)}
+                    >
+                      Invite
+                    </button>
+                  </li>
+                ))
+              ) : (
+                <li>No users available to invite.</li>
+              )}
+            </ul>
+            <button
+              className="mt-4 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              onClick={() => setShowInviteDialog(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

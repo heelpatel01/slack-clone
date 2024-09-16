@@ -43,7 +43,6 @@ const handleChannelGet = async (req, res) => {
   try {
     const userId = await req.cookies.userId;
 
-
     if (!userId) {
       return res
         .json({
@@ -79,5 +78,65 @@ const handleChannelGet = async (req, res) => {
   }
 };
 
+// channels/:channelId/invite/:userId
+const handleChannelInvite = async (req, res) => {
+  const { channelId, userId } = req.params;
 
-module.exports={handleChannelCreation,handleChannelGet};
+  if (!channelId || !userId) {
+    return res.json({
+      success: false,
+      message: "Please provide channelId and UserId",
+    });
+  }
+
+  //check in channel and user either it exists in each others array or not // if doesnt exist then add it for both //return
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User doesn't exists!",
+      });
+    }
+
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({
+        success: false,
+        message: "Channel not found!",
+      });
+    }
+
+    //check if the user is already in channels list or not
+    const checkExistance = channel.members.includes(userId);
+    if (checkExistance) {
+      return res.status(400).json({
+        success: false,
+        message: "User is already member of this channel!!!",
+      });
+    }
+
+    channel.members.push(userId);
+    user.channels.push(channelId);
+
+    await user.save();
+    await channel.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Yo! user invited successully 🎉",
+    });
+  } catch (error) {
+    console.log("Error while inviting the user: " + error);
+    return res.status(500).json({
+      success: false,
+      message: "server error while inviting an user!!!",
+    });
+  }
+};
+
+module.exports = {
+  handleChannelCreation,
+  handleChannelGet,
+  handleChannelInvite,
+};
