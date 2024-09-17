@@ -17,7 +17,7 @@ const allowedOrigins = [
 // Set up CORS middleware with dynamic origin check
 app.use(
   cors({
-    origin: "https://slack-clone-one-ivory.vercel.app/", //for local development add http://localhost:5173 or accordingly
+    origin: "*", //for local development add http://localhost:5173 or accordingly
     credentials: true, // Allow cookies to be sent
   })
 );
