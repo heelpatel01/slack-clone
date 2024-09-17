@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: backend
+    env: node
+    plan: free
+    buildCommand: "cd Backend && npm install"
+    startCommand: "cd Backend && npm start"
+    repo: <your-repo-url>
+
+  - type: web
+    name: frontend
+    env: node
+    plan: free
+    buildCommand: "cd Frontend && npm install"
+    startCommand: "cd Frontend && npm start"
+    repo: <your-repo-url>
