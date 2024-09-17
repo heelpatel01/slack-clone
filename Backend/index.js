@@ -10,17 +10,24 @@ const cookieParser = require("cookie-parser");
 
 // Define allowed origins
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://slack-clone-eight-beta.vercel.app/",
+  "https://slack-clone-one-ivory.vercel.app",
+  "http://localhost:5173", // Add any other development origins if needed
 ];
 
 // Set up CORS middleware with dynamic origin check
 app.use(
   cors({
-    origin: "*", //for local development add http://localhost:5173 or accordingly
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true, // Allow cookies to be sent
   })
 );
+
 
 app.use(cookieParser());
 app.use(express.json());
