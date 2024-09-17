@@ -192,6 +192,13 @@ function ChatArea(props) {
           placeholder="Message..."
           className="flex-1 mx-2 p-2 rounded-lg text-white bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={message}
+          onKeyDown={(e) => {
+            console.log("check208", e.key);
+
+            if (e.key === "Enter") {
+              messageCreation();
+            }
+          }}
           onChange={(e) => setMessage(e.target.value)}
         />
 
@@ -203,11 +210,6 @@ function ChatArea(props) {
           className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
           onClick={messageCreation}
           // onKeyDown={messageCreation}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              messageCreation();
-            }
-          }}
         >
           <AiOutlineSend size={24} />
         </button>
