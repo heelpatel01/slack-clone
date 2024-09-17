@@ -17,13 +17,7 @@ const allowedOrigins = [
 // Set up CORS middleware with dynamic origin check
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "https://slack-clone-eight-beta.vercel.app/", //for local development add http://localhost:5173 or accordingly
     credentials: true, // Allow cookies to be sent
   })
 );
