@@ -63,7 +63,7 @@ const handleChannelGet = async (req, res) => {
         .status(404);
     }
 
-    console.log(userWithChannel.channels);
+    // console.log(userWithChannel.channels);
 
     return res.status(201).json({
       message: "Yo channel fetched successfully!",

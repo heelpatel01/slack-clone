@@ -104,10 +104,9 @@ async function checkUserLogin(req, res) {
 //handleFetchUsersToInvite channels/:channelId/invite/
 async function handleFetchUsersToInvite(req, res) {
   try {
-    console.log("You were fucked up at this momemnt 1")
+    console.log("You were fucked up at this momemnt 1");
     const { channelId } = req.params;
-    console.log("You were fucked up at this momemnt 2")
-
+    console.log("You were fucked up at this momemnt 2");
 
     const usersList = await User.find({
       channels: {
@@ -115,7 +114,6 @@ async function handleFetchUsersToInvite(req, res) {
       },
     });
     // console.log("You were fucked up at this momemnt 3"+ usersList)
-
 
     if (usersList.length === 0 || !usersList) {
       return res.status(404).json({
@@ -133,10 +131,7 @@ async function handleFetchUsersToInvite(req, res) {
   }
 }
 
-
-
 module.exports = { handleFetchUsersToInvite };
-
 
 module.exports = {
   handleSignup,
