@@ -53,7 +53,11 @@ async function handleLogin(req, res) {
         .json({ error: "Invalid password", success: false });
     }
     return res
-      .cookie("userId", user._id, { httpOnly: true, sameSite: "none" })
+      .cookie("userId", user._id, {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+      })
       .status(200)
       .json({ message: "Login successful", user, success: true });
   } catch (error) {
