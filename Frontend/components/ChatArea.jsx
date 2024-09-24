@@ -37,7 +37,7 @@ function ChatArea(props) {
       fetchMessages();
     }, 5000);
 
-    // Cleanup interval on component unmount or when channelId changes
+    // it willl run on ...(Cleanup interval) on component unmount or when channelId changes...Nice
     return () => {
       setAllMessages([]);
       clearInterval(intervalId);

@@ -66,7 +66,7 @@ const handleNewMessageCreation = async (req, res) => {
     return res.status(500).json({
       message: "Error creating the message",
       success:false,
-      error: error.message, // Send only the error message for security reasons
+      error: error.message, 
     });
   }
 };
@@ -147,7 +147,7 @@ const handleMessageFetching = async (req, res) => {
     console.error("Error during fetching the messages:", error);
     return res.status(500).json({
       message: "Error during fetching the messages",
-      error: error.message, // Send only the error message for security reasons
+      error: error.message,
       success:false
     });
   }
