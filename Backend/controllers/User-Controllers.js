@@ -21,7 +21,11 @@ async function handleSignup(req, res) {
       newUser.save();
 
       return res
-        .cookie("userId", newUser._id, { httpOnly: true })
+        .cookie("userId", newUser._id, {
+          httpOnly: true,
+          sameSite: "none",
+          secure: true,
+        })
         .status(201)
         .json({ message: "User created successfully", newUser });
     }
