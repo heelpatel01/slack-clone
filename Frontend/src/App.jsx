@@ -31,7 +31,7 @@ function App() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Optional loading message
+    return <div>Please Wait It Will Take Some Seconds To Get Appear...</div>; // Optional loading message
   }
 
   return (
